@@ -193,6 +193,8 @@ For the GADGET II upgrade (a TPC-based successor to the present Proton Detector)
 ## Citation
 
 If you use this code in published work, please cite:
-> T. Budner, *<sup>31</sup>Cl β-Delayed Proton Decay and Classical Nova Nucleosynthesis*, Ph.D. thesis, Michigan State University (2022).
+> T. Budner, M. Friedman, L. J. Sun, C. Wrede, *et al.* "β-Delayed Proton Pandemonium: A first look at the <sup>31</sup>Cl(βpγ)<sup>30</sup>P decay scheme," Phys. Rev. C  (2026).
 
-> T. Budner, M. Friedman, L. J. Sun, C. Wrede, *et al.* *β-Delayed Proton Pandemonium: A first look at the <sup>31</sup>Cl(βpγ)<sup>30</sup>P decay scheme* (2026), in preparation.
+> T. Budner, "<sup>31</sup>Cl β-Delayed Proton Decay and Classical Nova Nucleosynthesis," Ph.D. thesis, Michigan State University (2022).
+
+> T. Budner, M. Friedman, C. Wrede, B. A. Brown *et al.* "Constraining the <sup>30</sup>P(p,γ)<sup>31</sup>S Reaction Rate in ONe Novae via the Weak, Low-Energy, β-Delayed Proton Decay of <sup>31</sup>Cl," Phys. Rev. Lett. **128**, 182701 (2022).
