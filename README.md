@@ -172,7 +172,7 @@ All three programs use the same simple format: `key = value` per line, `#` start
 
 ### Typical workflow
 
-1. Edit `configs/recoverBeamSpot.cfg` to use your experiment's pad intensities (either set `padsExperimental` inline or point `intensityFile` at a text file with five numbers).
+1. Edit `configs/recoverBeamSpot.cfg` to reflect the total number of `padCounts` observed in each detector channel.
 2. Run `./bin/RecoverBeamSpot` and record the fitted `(x_0, y_0, R)`.
 3. Edit `configs/getParticleDistributions.cfg` to use those values as the central preset in the `x_0`, `y_0`, `R` lists, and add ±1σ shifts as additional presets for systematic uncertainty.
 4. Run `./bin/GetParticleDistributions` to produce `ParticleDistributions.root`.
