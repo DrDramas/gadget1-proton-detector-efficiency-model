@@ -74,8 +74,8 @@ This code evaluates the efficiency across a grid of variations in each of these 
 │   └── stoppingPower104percent.txt
 ├── results/                    # example outputs
 │   ├── ParticleDistributions.root
-│   ├── efficiencySummary.txt
-│   └── efficiencyCentralWithSystematics.txt
+│   ├── allSimulatedEfficiencies.txt
+│   └── efficiencySummaryWithUncertainties.txt
 ├── docs/                       # extra documentation, images
 │   └── images/
 │       ├── GADGET.png
@@ -160,10 +160,10 @@ Output: `results/allSimulatedEfficiencies.txt` — human-readable table with one
 Parses `results/allSimulatedEfficiencies.txt` and produces a clean tabular summary of proton energy vs. central efficiency with separate columns for the systematic and statistical uncertainties. The central value is the median efficiency across all variants in the `(beamSpot, threshold, stoppingFile, DeIdx)` parameter scan. The systematic uncertainty is the unbiased sample standard deviation of the efficiency across variants at each energy; the statistical uncertainty is the per-variant Monte Carlo uncertainty of the median variant, computed by the simulation as `eff/sqrt(h6)`.
 
 ```bash
-python3 summarize_efficiency.py [input.txt] [output.txt]
+python3 scripts/summarize_efficiency.py [input.txt] [output.txt]
 ```
 
-Defaults are `allSimulatedEfficiencies.txt` and `efficiencySummaryWithUncertainties.txt` in the current directory. The two uncertainties are reported separately so the relative contribution of each can be inspected; to obtain a single combined 1σ error bar, add them in quadrature.
+Defaults are `results/allSimulatedEfficiencies.txt` and `results/efficiencySummaryWithUncertainties.txt` relative to the root directory. The two uncertainties are reported separately so the relative contribution of each can be inspected; to obtain a single combined 1σ error bar, add them in quadrature.
 
 ## Configuration
 
