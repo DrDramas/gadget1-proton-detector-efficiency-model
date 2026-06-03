@@ -55,13 +55,13 @@ This code evaluates the efficiency across a grid of variations in each of these 
 ├── Makefile
 ├── README.md
 ├── .gitignore
-├── gecoverBeamSpot.cpp           # stage-0: fit beam-spot x_0, y_0, R
-├── getParticleDistributions.cpp  # stage-1: sample input distributions
-├── sgmc.cpp                      # stage-2: Monte-Carlo efficiency scan
-├── summarize_efficiency.py       # stage-3: post-process efficiency summary
-├── recoverBeamSpot.cfg           # stage-0 config
-├── getParticleDistributions.cfg  # stage-1 config
-├── sgmc.cfg                      # stage-2 config
+├── gecoverBeamSpot.cpp           # stage-1: fit beam-spot x_0, y_0, R
+├── getParticleDistributions.cpp  # stage-2: sample input distributions
+├── sgmc.cpp                      # stage-3: Monte-Carlo efficiency scan
+├── summarize_efficiency.py       # stage-4: post-process efficiency summary
+├── recoverBeamSpot.cfg           # stage-1 config
+├── getParticleDistributions.cfg  # stage-2 config
+├── sgmc.cfg                      # stage-3 config
 ├── data/                         # read-only inputs
 │   ├── BetaDecayData31Cl.root    # reference beam-profile histogram
 │   ├── padCounts.txt             # (optional) measured pad intensities
@@ -93,9 +93,9 @@ From the project root:
 
 ```bash
 make                           # builds all three executables
-make RecoverBeamSpot           # stage-0 only
-make GetParticleDistributions  # stage-1 only
-make SGMC                      # stage-2 only
+make RecoverBeamSpot           # stage-1 only
+make GetParticleDistributions  # stage-2 only
+make SGMC                      # stage-3 only
 make clean                     # removes binaries
 ```
 
@@ -117,7 +117,7 @@ The three stages run sequentially: stage 0 extracts beam-spot parameters from da
 
 If no config path is passed, each program falls back to its default filename (`recoverBeamSpot.cfg`, `getParticleDistributions.cfg`, and `sgmc.cfg` respectively).
 
-### Stage 0: `RecoverBeamSpot`
+### Stage 1: `RecoverBeamSpot`
 
 Fits a 2D Gaussian beam spot to the Proton Detector events measured on the five active pads. The code integrates the assumed beam profile over each pad and uses MINUIT (SIMPLEX → MIGRAD) to minimize the χ<sup>2</sup> between
 calculated and measured pad-intensity ratios.
@@ -126,7 +126,7 @@ Outputs the best-fit `(x_0, y_0, R)` to stdout. Set `drawBeam = 1` in the config
 
 The extracted values feed into stage 1's `x_0`, `y_0`, and `R` parameters (along with any ±1σ variations you want to sweep for systematic uncertainty).
 
-### Stage 1: `GetParticleDistributions`
+### Stage 2: `GetParticleDistributions`
 
 Reads `data/tripleCoincidences.root`, samples the longitudinal drift-time distribution, builds N Gaussian beam-spot histograms, and builds M × 9 electron-cloud histograms (one per De value per drift time from 0 to 8 µs). Writes everything to
 `results/ParticleDistributions.root`.
@@ -137,13 +137,13 @@ Output histograms:
 - `BeamSpot_k` for k = 0..N-1 — 2D beam spot for preset k (`numHalfLives`, `x_0`, `y_0`, `R` in the config are length-N parallel lists)
 - `EC_De{k}_t{j}us` for k = 0..M-1, j = 0..8 — electron cloud family for De[k] at drift time j µs (j = 0 is internally treated as 0.1 µs to avoid a degenerate σ = 0)
 
-### Stage 2: `SGMC`
+### Stage 3: `SGMC`
 
 Reads `results/ParticleDistributions.root` and runs the Monte Carlo simulation for `nProtons`. For each energy in `labEnergies`, for each combination of `(beamSpotHist, stoppingFile, De-family)`, the code tracks protons through the active volume and counts how many pass the veto-threshold cut. The resulting efficiencies define the scan used to extract the central value and systematic band.
 
 Output: `results/allSimulatedEfficiencies.txt` — human-readable table with one block per energy, listing every variant's efficiency plus the median/min/max across variants.
 
-### Stage 3: `summarize_efficiency.py` (optional post-processing)
+### Stage 4: `summarize_efficiency.py` (optional post-processing)
 
 Parses `results/allSimulatedEfficiencies.txt` and produces a clean tabular summary of proton energy vs. central efficiency with separate columns for the systematic and statistical uncertainties. The central value is the median efficiency across all variants in the `(beamSpot, threshold, stoppingFile, DeIdx)` parameter scan. The systematic uncertainty is the unbiased sample standard deviation of the efficiency across variants at each energy; the statistical uncertainty is the per-variant Monte Carlo uncertainty of the median variant, computed by the simulation as `eff/sqrt(h6)`.
 
@@ -225,4 +225,4 @@ Related works:
 
 ### Note on code provenance
 
-The numerical results reported in the published paper were generated with an earlier implementation of this code. The software has since been refactored for clarity, configurability, and improved parallelization, but the underlying physics and numerical methods are unchanged. The refactored code has been validated against the original by comparing detection efficiencies across the systematic parameter scan; the central values agree across all lab-frame proton energies from 250 keV to 2414 keV within Monte Carlo statistical uncertainty.
+The numerical results reported in the published articles were generated with earlier implementations of this code. The software has since been refactored for clarity, configurability, and improved parallelization, but the underlying physics and numerical methods are unchanged. The refactored code has been validated against the original by comparing detection efficiencies across the systematic parameter scan; the central values agree across all lab-frame proton energies from 250 keV to 2414 keV within Monte Carlo statistical uncertainty.
