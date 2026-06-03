@@ -1,15 +1,24 @@
-# Compiled executables
+# Compiled binaries
 RecoverBeamSpot
 GetParticleDistributions
 SGMC
 
 # Object files
 *.o
-*.d
+*.a
 
-# README figures
-images/
+# Python cache
+__pycache__/
+*.pyc
 
-# Editor / OS junk
+# Editor and OS junk
 *.swp
+*.swo
+*~
 .DS_Store
+.vscode/
+.idea/
+
+# Don't commit ROOT crash dumps
+core
+core.*
