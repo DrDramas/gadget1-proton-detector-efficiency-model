@@ -536,6 +536,11 @@ void getParticleDistributions(const char *configPath = "getParticleDistributions
 
   // Open output BEFORE creating histograms destined for it.
   TFile *OutFile = new TFile(c.outputFile.c_str(), "RECREATE");
+  if (!OutFile || OutFile->IsZombie()) {
+      cerr << "ERROR: could not create output file " << c.outputFile << endl;
+      cerr << "       (Does the parent directory exist and is it writable?)" << endl;
+      exit(1);
+  }
 
   // Drift-times reconstruction -- serial, O(total counts), negligible.
   TH1D *DriftTimes = new TH1D("DriftTimes",
@@ -604,23 +609,38 @@ void getParticleDistributions(const char *configPath = "getParticleDistributions
   // ---- Write results serially (TFile is not thread-safe) -------------------
   OutFile->cd();
   for (auto &uh : results) {
-    if (uh) {
-      uh->SetDirectory(OutFile);
-      uh->Write();
-    }
+      if (uh) {
+          TH2D* raw = uh.release();      // release ownership from unique_ptr
+          raw->SetDirectory(OutFile);    // TFile now owns it exclusively
+          raw->Write();
+      }
   }
 
   OutFile->Close();
   InFile->Close();
-  delete OutFile;
+  delete OutFile;                        // safely deletes histograms it owns
   delete InFile;
 }
 
 // Allow standalone compilation: `g++ getParticleDistributions.cpp ... -o getParticleDistributions`
 // When loaded as a ROOT macro (via CLING), __CLING__ is defined and main() is
 // skipped, so `root -l 'getParticleDistributions.cpp("cfg.cfg")'` still works as before.
+/****
 #ifndef __CLING__
 int main(int argc, char** argv) {
+  const char* configFile = (argc > 1) ? argv[1] : "getParticleDistributions.cfg";
+  getParticleDistributions(configFile);
+  return 0;
+}
+#endif
+****/
+
+#include "ROOT/RConfig.hxx"  // probably not needed, but harmless
+#include "TROOT.h"
+
+#ifndef __CLING__
+int main(int argc, char** argv) {
+  ROOT::EnableThreadSafety();   // <-- add this line
   const char* configFile = (argc > 1) ? argv[1] : "getParticleDistributions.cfg";
   getParticleDistributions(configFile);
   return 0;

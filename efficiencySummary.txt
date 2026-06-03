@@ -1,0 +1,195 @@
+# SGMC efficiency summary
+# nProtons per variant: 100
+# Scan dimensions: beamSpotHist x threshold x stoppingFile x DeIndex
+# central value is the median across variants
+# lower / upper are the min / max efficiency across variants
+# errors are 1-sigma statistical, = efficiency / sqrt(h6)
+
+============================================================
+Proton energy: 0.2500 MeV (250 keV)
+  Total energy deposited : 24.9847 MeV
+  Expected electrons     : 9615.3846  (from E/W)
+  Summed electrons       : 961166
+  Variants evaluated     : 81
+  Central (median) : eff = 1.0000 +/- 0.1000   [beamSpot=BeamSpot_0, threshold=769, stoppingFile=data/stoppingPower104percent.txt, DeIdx=2, h6=100]
+  Lower  (min)     : eff = 0.9800 +/- 0.0990   [beamSpot=BeamSpot_2, threshold=192, stoppingFile=data/protonStoppingPower808TorrP10gas.txt, DeIdx=2, h6=98]
+  Upper  (max)     : eff = 1.0000 +/- 0.1000   [beamSpot=BeamSpot_2, threshold=385, stoppingFile=data/protonStoppingPower808TorrP10gas.txt, DeIdx=1, h6=100]
+
+  All variants:
+    beamSpotHist              threshold stoppingFile                                DeIdx       h6        eff       dEff
+    BeamSpot_0                      192 data/protonStoppingPower808TorrP10gas.txt        0      100     1.0000     0.1000
+    BeamSpot_0                      385 data/protonStoppingPower808TorrP10gas.txt        0      100     1.0000     0.1000
+    BeamSpot_0                      769 data/protonStoppingPower808TorrP10gas.txt        0      100     1.0000     0.1000
+    BeamSpot_0                      192 data/protonStoppingPower808TorrP10gas.txt        1      100     1.0000     0.1000
+    BeamSpot_0                      385 data/protonStoppingPower808TorrP10gas.txt        1      100     1.0000     0.1000
+    BeamSpot_0                      769 data/protonStoppingPower808TorrP10gas.txt        1      100     1.0000     0.1000
+    BeamSpot_0                      192 data/protonStoppingPower808TorrP10gas.txt        2      100     1.0000     0.1000
+    BeamSpot_0                      385 data/protonStoppingPower808TorrP10gas.txt        2      100     1.0000     0.1000
+    BeamSpot_0                      769 data/protonStoppingPower808TorrP10gas.txt        2      100     1.0000     0.1000
+    BeamSpot_1                      192 data/protonStoppingPower808TorrP10gas.txt        0      100     1.0000     0.1000
+    BeamSpot_1                      385 data/protonStoppingPower808TorrP10gas.txt        0      100     1.0000     0.1000
+    BeamSpot_1                      769 data/protonStoppingPower808TorrP10gas.txt        0      100     1.0000     0.1000
+    BeamSpot_1                      192 data/protonStoppingPower808TorrP10gas.txt        1      100     1.0000     0.1000
+    BeamSpot_1                      385 data/protonStoppingPower808TorrP10gas.txt        1      100     1.0000     0.1000
+    BeamSpot_1                      769 data/protonStoppingPower808TorrP10gas.txt        1      100     1.0000     0.1000
+    BeamSpot_1                      192 data/protonStoppingPower808TorrP10gas.txt        2      100     1.0000     0.1000
+    BeamSpot_1                      385 data/protonStoppingPower808TorrP10gas.txt        2      100     1.0000     0.1000
+    BeamSpot_1                      769 data/protonStoppingPower808TorrP10gas.txt        2      100     1.0000     0.1000
+    BeamSpot_2                      192 data/protonStoppingPower808TorrP10gas.txt        0       99     0.9900     0.0995
+    BeamSpot_2                      385 data/protonStoppingPower808TorrP10gas.txt        0      100     1.0000     0.1000
+    BeamSpot_2                      769 data/protonStoppingPower808TorrP10gas.txt        0      100     1.0000     0.1000
+    BeamSpot_2                      192 data/protonStoppingPower808TorrP10gas.txt        1      100     1.0000     0.1000
+    BeamSpot_2                      385 data/protonStoppingPower808TorrP10gas.txt        1      100     1.0000     0.1000
+    BeamSpot_2                      769 data/protonStoppingPower808TorrP10gas.txt        1      100     1.0000     0.1000
+    BeamSpot_2                      192 data/protonStoppingPower808TorrP10gas.txt        2       98     0.9800     0.0990
+    BeamSpot_2                      385 data/protonStoppingPower808TorrP10gas.txt        2      100     1.0000     0.1000
+    BeamSpot_2                      769 data/protonStoppingPower808TorrP10gas.txt        2      100     1.0000     0.1000
+    BeamSpot_0                      192 data/stoppingPower96percent.txt                 0       99     0.9900     0.0995
+    BeamSpot_0                      385 data/stoppingPower96percent.txt                 0      100     1.0000     0.1000
+    BeamSpot_0                      769 data/stoppingPower96percent.txt                 0      100     1.0000     0.1000
+    BeamSpot_0                      192 data/stoppingPower96percent.txt                 1      100     1.0000     0.1000
+    BeamSpot_0                      385 data/stoppingPower96percent.txt                 1      100     1.0000     0.1000
+    BeamSpot_0                      769 data/stoppingPower96percent.txt                 1      100     1.0000     0.1000
+    BeamSpot_0                      192 data/stoppingPower96percent.txt                 2      100     1.0000     0.1000
+    BeamSpot_0                      385 data/stoppingPower96percent.txt                 2      100     1.0000     0.1000
+    BeamSpot_0                      769 data/stoppingPower96percent.txt                 2      100     1.0000     0.1000
+    BeamSpot_1                      192 data/stoppingPower96percent.txt                 0      100     1.0000     0.1000
+    BeamSpot_1                      385 data/stoppingPower96percent.txt                 0      100     1.0000     0.1000
+    BeamSpot_1                      769 data/stoppingPower96percent.txt                 0      100     1.0000     0.1000
+    BeamSpot_1                      192 data/stoppingPower96percent.txt                 1      100     1.0000     0.1000
+    BeamSpot_1                      385 data/stoppingPower96percent.txt                 1      100     1.0000     0.1000
+    BeamSpot_1                      769 data/stoppingPower96percent.txt                 1      100     1.0000     0.1000
+    BeamSpot_1                      192 data/stoppingPower96percent.txt                 2      100     1.0000     0.1000
+    BeamSpot_1                      385 data/stoppingPower96percent.txt                 2      100     1.0000     0.1000
+    BeamSpot_1                      769 data/stoppingPower96percent.txt                 2      100     1.0000     0.1000
+    BeamSpot_2                      192 data/stoppingPower96percent.txt                 0       99     0.9900     0.0995
+    BeamSpot_2                      385 data/stoppingPower96percent.txt                 0      100     1.0000     0.1000
+    BeamSpot_2                      769 data/stoppingPower96percent.txt                 0      100     1.0000     0.1000
+    BeamSpot_2                      192 data/stoppingPower96percent.txt                 1      100     1.0000     0.1000
+    BeamSpot_2                      385 data/stoppingPower96percent.txt                 1      100     1.0000     0.1000
+    BeamSpot_2                      769 data/stoppingPower96percent.txt                 1      100     1.0000     0.1000
+    BeamSpot_2                      192 data/stoppingPower96percent.txt                 2      100     1.0000     0.1000
+    BeamSpot_2                      385 data/stoppingPower96percent.txt                 2      100     1.0000     0.1000
+    BeamSpot_2                      769 data/stoppingPower96percent.txt                 2      100     1.0000     0.1000
+    BeamSpot_0                      192 data/stoppingPower104percent.txt                0      100     1.0000     0.1000
+    BeamSpot_0                      385 data/stoppingPower104percent.txt                0      100     1.0000     0.1000
+    BeamSpot_0                      769 data/stoppingPower104percent.txt                0      100     1.0000     0.1000
+    BeamSpot_0                      192 data/stoppingPower104percent.txt                1      100     1.0000     0.1000
+    BeamSpot_0                      385 data/stoppingPower104percent.txt                1      100     1.0000     0.1000
+    BeamSpot_0                      769 data/stoppingPower104percent.txt                1      100     1.0000     0.1000
+    BeamSpot_0                      192 data/stoppingPower104percent.txt                2       99     0.9900     0.0995
+    BeamSpot_0                      385 data/stoppingPower104percent.txt                2      100     1.0000     0.1000
+    BeamSpot_0                      769 data/stoppingPower104percent.txt                2      100     1.0000     0.1000
+    BeamSpot_1                      192 data/stoppingPower104percent.txt                0      100     1.0000     0.1000
+    BeamSpot_1                      385 data/stoppingPower104percent.txt                0      100     1.0000     0.1000
+    BeamSpot_1                      769 data/stoppingPower104percent.txt                0      100     1.0000     0.1000
+    BeamSpot_1                      192 data/stoppingPower104percent.txt                1      100     1.0000     0.1000
+    BeamSpot_1                      385 data/stoppingPower104percent.txt                1      100     1.0000     0.1000
+    BeamSpot_1                      769 data/stoppingPower104percent.txt                1      100     1.0000     0.1000
+    BeamSpot_1                      192 data/stoppingPower104percent.txt                2      100     1.0000     0.1000
+    BeamSpot_1                      385 data/stoppingPower104percent.txt                2      100     1.0000     0.1000
+    BeamSpot_1                      769 data/stoppingPower104percent.txt                2      100     1.0000     0.1000
+    BeamSpot_2                      192 data/stoppingPower104percent.txt                0       98     0.9800     0.0990
+    BeamSpot_2                      385 data/stoppingPower104percent.txt                0      100     1.0000     0.1000
+    BeamSpot_2                      769 data/stoppingPower104percent.txt                0      100     1.0000     0.1000
+    BeamSpot_2                      192 data/stoppingPower104percent.txt                1      100     1.0000     0.1000
+    BeamSpot_2                      385 data/stoppingPower104percent.txt                1      100     1.0000     0.1000
+    BeamSpot_2                      769 data/stoppingPower104percent.txt                1      100     1.0000     0.1000
+    BeamSpot_2                      192 data/stoppingPower104percent.txt                2       98     0.9800     0.0990
+    BeamSpot_2                      385 data/stoppingPower104percent.txt                2       99     0.9900     0.0995
+    BeamSpot_2                      769 data/stoppingPower104percent.txt                2      100     1.0000     0.1000
+
+============================================================
+Proton energy: 0.9330 MeV (933 keV)
+  Total energy deposited : 93.3006 MeV
+  Expected electrons     : 35884.6154  (from E/W)
+  Summed electrons       : 3588433
+  Variants evaluated     : 81
+  Central (median) : eff = 0.7900 +/- 0.0889   [beamSpot=BeamSpot_2, threshold=769, stoppingFile=data/protonStoppingPower808TorrP10gas.txt, DeIdx=2, h6=79]
+  Lower  (min)     : eff = 0.6500 +/- 0.0806   [beamSpot=BeamSpot_2, threshold=192, stoppingFile=data/protonStoppingPower808TorrP10gas.txt, DeIdx=0, h6=65]
+  Upper  (max)     : eff = 0.9500 +/- 0.0975   [beamSpot=BeamSpot_1, threshold=769, stoppingFile=data/stoppingPower104percent.txt, DeIdx=1, h6=95]
+
+  All variants:
+    beamSpotHist              threshold stoppingFile                                DeIdx       h6        eff       dEff
+    BeamSpot_0                      192 data/protonStoppingPower808TorrP10gas.txt        0       78     0.7800     0.0883
+    BeamSpot_0                      385 data/protonStoppingPower808TorrP10gas.txt        0       79     0.7900     0.0889
+    BeamSpot_0                      769 data/protonStoppingPower808TorrP10gas.txt        0       84     0.8400     0.0917
+    BeamSpot_0                      192 data/protonStoppingPower808TorrP10gas.txt        1       82     0.8200     0.0906
+    BeamSpot_0                      385 data/protonStoppingPower808TorrP10gas.txt        1       85     0.8500     0.0922
+    BeamSpot_0                      769 data/protonStoppingPower808TorrP10gas.txt        1       88     0.8800     0.0938
+    BeamSpot_0                      192 data/protonStoppingPower808TorrP10gas.txt        2       79     0.7900     0.0889
+    BeamSpot_0                      385 data/protonStoppingPower808TorrP10gas.txt        2       82     0.8200     0.0906
+    BeamSpot_0                      769 data/protonStoppingPower808TorrP10gas.txt        2       85     0.8500     0.0922
+    BeamSpot_1                      192 data/protonStoppingPower808TorrP10gas.txt        0       87     0.8700     0.0933
+    BeamSpot_1                      385 data/protonStoppingPower808TorrP10gas.txt        0       89     0.8900     0.0943
+    BeamSpot_1                      769 data/protonStoppingPower808TorrP10gas.txt        0       94     0.9400     0.0970
+    BeamSpot_1                      192 data/protonStoppingPower808TorrP10gas.txt        1       77     0.7700     0.0877
+    BeamSpot_1                      385 data/protonStoppingPower808TorrP10gas.txt        1       81     0.8100     0.0900
+    BeamSpot_1                      769 data/protonStoppingPower808TorrP10gas.txt        1       86     0.8600     0.0927
+    BeamSpot_1                      192 data/protonStoppingPower808TorrP10gas.txt        2       84     0.8400     0.0917
+    BeamSpot_1                      385 data/protonStoppingPower808TorrP10gas.txt        2       87     0.8700     0.0933
+    BeamSpot_1                      769 data/protonStoppingPower808TorrP10gas.txt        2       88     0.8800     0.0938
+    BeamSpot_2                      192 data/protonStoppingPower808TorrP10gas.txt        0       65     0.6500     0.0806
+    BeamSpot_2                      385 data/protonStoppingPower808TorrP10gas.txt        0       71     0.7100     0.0843
+    BeamSpot_2                      769 data/protonStoppingPower808TorrP10gas.txt        0       76     0.7600     0.0872
+    BeamSpot_2                      192 data/protonStoppingPower808TorrP10gas.txt        1       73     0.7300     0.0854
+    BeamSpot_2                      385 data/protonStoppingPower808TorrP10gas.txt        1       74     0.7400     0.0860
+    BeamSpot_2                      769 data/protonStoppingPower808TorrP10gas.txt        1       77     0.7700     0.0877
+    BeamSpot_2                      192 data/protonStoppingPower808TorrP10gas.txt        2       74     0.7400     0.0860
+    BeamSpot_2                      385 data/protonStoppingPower808TorrP10gas.txt        2       78     0.7800     0.0883
+    BeamSpot_2                      769 data/protonStoppingPower808TorrP10gas.txt        2       79     0.7900     0.0889
+    BeamSpot_0                      192 data/stoppingPower96percent.txt                 0       78     0.7800     0.0883
+    BeamSpot_0                      385 data/stoppingPower96percent.txt                 0       83     0.8300     0.0911
+    BeamSpot_0                      769 data/stoppingPower96percent.txt                 0       84     0.8400     0.0917
+    BeamSpot_0                      192 data/stoppingPower96percent.txt                 1       72     0.7200     0.0849
+    BeamSpot_0                      385 data/stoppingPower96percent.txt                 1       73     0.7300     0.0854
+    BeamSpot_0                      769 data/stoppingPower96percent.txt                 1       76     0.7600     0.0872
+    BeamSpot_0                      192 data/stoppingPower96percent.txt                 2       71     0.7100     0.0843
+    BeamSpot_0                      385 data/stoppingPower96percent.txt                 2       74     0.7400     0.0860
+    BeamSpot_0                      769 data/stoppingPower96percent.txt                 2       76     0.7600     0.0872
+    BeamSpot_1                      192 data/stoppingPower96percent.txt                 0       79     0.7900     0.0889
+    BeamSpot_1                      385 data/stoppingPower96percent.txt                 0       82     0.8200     0.0906
+    BeamSpot_1                      769 data/stoppingPower96percent.txt                 0       84     0.8400     0.0917
+    BeamSpot_1                      192 data/stoppingPower96percent.txt                 1       83     0.8300     0.0911
+    BeamSpot_1                      385 data/stoppingPower96percent.txt                 1       84     0.8400     0.0917
+    BeamSpot_1                      769 data/stoppingPower96percent.txt                 1       84     0.8400     0.0917
+    BeamSpot_1                      192 data/stoppingPower96percent.txt                 2       82     0.8200     0.0906
+    BeamSpot_1                      385 data/stoppingPower96percent.txt                 2       84     0.8400     0.0917
+    BeamSpot_1                      769 data/stoppingPower96percent.txt                 2       86     0.8600     0.0927
+    BeamSpot_2                      192 data/stoppingPower96percent.txt                 0       77     0.7700     0.0877
+    BeamSpot_2                      385 data/stoppingPower96percent.txt                 0       81     0.8100     0.0900
+    BeamSpot_2                      769 data/stoppingPower96percent.txt                 0       85     0.8500     0.0922
+    BeamSpot_2                      192 data/stoppingPower96percent.txt                 1       68     0.6800     0.0825
+    BeamSpot_2                      385 data/stoppingPower96percent.txt                 1       68     0.6800     0.0825
+    BeamSpot_2                      769 data/stoppingPower96percent.txt                 1       73     0.7300     0.0854
+    BeamSpot_2                      192 data/stoppingPower96percent.txt                 2       66     0.6600     0.0812
+    BeamSpot_2                      385 data/stoppingPower96percent.txt                 2       68     0.6800     0.0825
+    BeamSpot_2                      769 data/stoppingPower96percent.txt                 2       71     0.7100     0.0843
+    BeamSpot_0                      192 data/stoppingPower104percent.txt                0       69     0.6900     0.0831
+    BeamSpot_0                      385 data/stoppingPower104percent.txt                0       74     0.7400     0.0860
+    BeamSpot_0                      769 data/stoppingPower104percent.txt                0       77     0.7700     0.0877
+    BeamSpot_0                      192 data/stoppingPower104percent.txt                1       76     0.7600     0.0872
+    BeamSpot_0                      385 data/stoppingPower104percent.txt                1       78     0.7800     0.0883
+    BeamSpot_0                      769 data/stoppingPower104percent.txt                1       84     0.8400     0.0917
+    BeamSpot_0                      192 data/stoppingPower104percent.txt                2       69     0.6900     0.0831
+    BeamSpot_0                      385 data/stoppingPower104percent.txt                2       72     0.7200     0.0849
+    BeamSpot_0                      769 data/stoppingPower104percent.txt                2       80     0.8000     0.0894
+    BeamSpot_1                      192 data/stoppingPower104percent.txt                0       84     0.8400     0.0917
+    BeamSpot_1                      385 data/stoppingPower104percent.txt                0       84     0.8400     0.0917
+    BeamSpot_1                      769 data/stoppingPower104percent.txt                0       87     0.8700     0.0933
+    BeamSpot_1                      192 data/stoppingPower104percent.txt                1       87     0.8700     0.0933
+    BeamSpot_1                      385 data/stoppingPower104percent.txt                1       89     0.8900     0.0943
+    BeamSpot_1                      769 data/stoppingPower104percent.txt                1       95     0.9500     0.0975
+    BeamSpot_1                      192 data/stoppingPower104percent.txt                2       85     0.8500     0.0922
+    BeamSpot_1                      385 data/stoppingPower104percent.txt                2       89     0.8900     0.0943
+    BeamSpot_1                      769 data/stoppingPower104percent.txt                2       92     0.9200     0.0959
+    BeamSpot_2                      192 data/stoppingPower104percent.txt                0       75     0.7500     0.0866
+    BeamSpot_2                      385 data/stoppingPower104percent.txt                0       76     0.7600     0.0872
+    BeamSpot_2                      769 data/stoppingPower104percent.txt                0       81     0.8100     0.0900
+    BeamSpot_2                      192 data/stoppingPower104percent.txt                1       76     0.7600     0.0872
+    BeamSpot_2                      385 data/stoppingPower104percent.txt                1       79     0.7900     0.0889
+    BeamSpot_2                      769 data/stoppingPower104percent.txt                1       79     0.7900     0.0889
+    BeamSpot_2                      192 data/stoppingPower104percent.txt                2       70     0.7000     0.0837
+    BeamSpot_2                      385 data/stoppingPower104percent.txt                2       74     0.7400     0.0860
+    BeamSpot_2                      769 data/stoppingPower104percent.txt                2       76     0.7600     0.0872
+

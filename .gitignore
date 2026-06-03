@@ -7,9 +7,6 @@ SGMC
 *.o
 *.d
 
-# Output directory
-results/
-
 # README figures
 images/
 

@@ -42,19 +42,19 @@ using std::vector;
 //
 // Pad geometry:
 //   The detector has one central circular pad of radius rCentral, surrounded
-//   by an annular ring (rCentral -> rOuterPad) divided azimuthally into four
+//   by an annular ring (rCentral -> rBeamSpot) divided azimuthally into four
 //   quadrant pads at theta = 0, 90, 180, 270 degrees.  For display purposes
-//   two additional circles are drawn at rGuardInner and rGuardOuter with 45-
+//   two additional circles are drawn at rVetoInner and rVetoOuter with 45-
 //   degree radial lines between them.
 //
 // Config keys (all optional; defaults in parentheses reproduce the original
 // AstroBox-II geometry and the original integration grid):
 //
 //   Geometry:
-//     rCentral       (14.2)  -- inner radius of the quadrant pads [mm]
-//     rOuterPad      (27.6)  -- outer radius of the quadrant pads [mm]
-//     rGuardInner    (40.0)  -- inner radius of the guard ring    [mm]
-//     rGuardOuter    (50.0)  -- outer radius of the guard ring    [mm]
+//     rCentral       (14.2)  -- inner radius of the quadrant pads  [mm]
+//     rBeamSpot      (27.6)  -- radius of the beam spot            [mm]
+//     rVetoInner     (40.0)  -- inner radius of the veto pads      [mm]
+//     rVetoOuter     (50.0)  -- outer radius of the veto pads      [mm]
 //
 //   Numerical integration:
 //     epsR           (1.0)   -- radial step [mm]
@@ -90,9 +90,9 @@ using std::vector;
 struct Config {
     // Geometry
     double rCentral     = 14.2;
-    double rOuterPad    = 27.6;
-    double rGuardInner  = 40.0;
-    double rGuardOuter  = 50.0;
+    double rBeamSpot    = 27.6;
+    double rVetoInner   = 40.0;
+    double rVetoOuter   = 50.0;
 
     // Integration
     double epsR         = 1.0;
@@ -181,9 +181,9 @@ static Config loadConfig(const string& path) {
         if (!parseConfigLine(raw, key, value)) continue;
 
         if      (key == "rCentral")         cfg.rCentral    = std::stod(value);
-        else if (key == "rOuterPad")        cfg.rOuterPad   = std::stod(value);
-        else if (key == "rGuardInner")      cfg.rGuardInner = std::stod(value);
-        else if (key == "rGuardOuter")      cfg.rGuardOuter = std::stod(value);
+        else if (key == "rBeamSpot")        cfg.rBeamSpot   = std::stod(value);
+        else if (key == "rVetoInner")      cfg.rVetoInner = std::stod(value);
+        else if (key == "rVetoOuter")      cfg.rVetoOuter = std::stod(value);
         else if (key == "epsR")             cfg.epsR        = std::stod(value);
         else if (key == "epsThetaDeg")      cfg.epsThetaDeg = std::stod(value);
         else if (key == "padsExperimental") cfg.padsExperimental = parseDoubleList(value);
@@ -224,9 +224,9 @@ static Config loadConfig(const string& path) {
 
 static void printConfig(const Config& c) {
     cout << "---- recoverBeamSpot configuration ----"                         << endl;
-    std::printf("  Geometry [mm]: rCentral=%.2f, rOuterPad=%.2f, "
-                "rGuardInner=%.1f, rGuardOuter=%.1f\n",
-                c.rCentral, c.rOuterPad, c.rGuardInner, c.rGuardOuter);
+    std::printf("  Geometry [mm]: rCentral=%.2f, rBeamSpot=%.2f, "
+                "rVetoInner=%.1f, rVetoOuter=%.1f\n",
+                c.rCentral, c.rBeamSpot, c.rVetoInner, c.rVetoOuter);
     std::printf("  Integration : epsR=%.3f mm, epsTheta=%.3f deg\n",
                 c.epsR, c.epsThetaDeg);
     std::printf("  Measured counts: %.1f (central) | %.1f %.1f %.1f %.1f "
@@ -302,7 +302,7 @@ static void calculatePadIntensities(const Config& c,
         const double thLo = q * TMath::Pi() / 2.0;
         const double thHi = (q + 1) * TMath::Pi() / 2.0;
         outPads[q] = integratePad(beamX, beamY, R,
-                                  c.rCentral, c.rOuterPad,
+                                  c.rCentral, c.rBeamSpot,
                                   thLo, thHi,
                                   c.epsR, epsTheta);
         outPads[q] /= A;
@@ -366,15 +366,15 @@ static void drawPads(DrawingState& st, const Config& c) {
     st.eCentral->SetFillStyle(0);
     st.eCentral->SetLineWidth(2);
 
-    st.eGuardInner = new TEllipse(0, 0, c.rGuardInner, c.rGuardInner);
+    st.eGuardInner = new TEllipse(0, 0, c.rVetoInner, c.rVetoInner);
     st.eGuardInner->SetFillStyle(0);
     st.eGuardInner->SetLineWidth(2);
 
-    st.eGuardOuter = new TEllipse(0, 0, c.rGuardOuter, c.rGuardOuter);
+    st.eGuardOuter = new TEllipse(0, 0, c.rVetoOuter, c.rVetoOuter);
     st.eGuardOuter->SetFillStyle(0);
     st.eGuardOuter->SetLineWidth(2);
 
-    st.eOuterPad = new TEllipse(0, 0, c.rOuterPad, c.rOuterPad);
+    st.eOuterPad = new TEllipse(0, 0, c.rBeamSpot, c.rBeamSpot);
     st.eOuterPad->SetFillStyle(0);
     st.eOuterPad->SetLineStyle(2);
     st.eOuterPad->SetLineColor(5);
@@ -382,21 +382,21 @@ static void drawPads(DrawingState& st, const Config& c) {
 
     // Radial divisions at 0, 90, 180, 270 deg between the central and
     // guard-outer circles.
-    st.l1 = new TLine(0,  c.rCentral,  0,  c.rGuardOuter);
-    st.l2 = new TLine( c.rCentral, 0,   c.rGuardOuter, 0);
-    st.l3 = new TLine(0, -c.rCentral,  0, -c.rGuardOuter);
-    st.l4 = new TLine(-c.rCentral, 0,  -c.rGuardOuter, 0);
+    st.l1 = new TLine(0,  c.rCentral,  0,  c.rVetoOuter);
+    st.l2 = new TLine( c.rCentral, 0,   c.rVetoOuter, 0);
+    st.l3 = new TLine(0, -c.rCentral,  0, -c.rVetoOuter);
+    st.l4 = new TLine(-c.rCentral, 0,  -c.rVetoOuter, 0);
 
     // Guard-ring 45-deg divisions (display only; not integrated).
     const double s = 1.0 / std::sqrt(2.0);
-    st.l5 = new TLine( c.rGuardInner*s,  c.rGuardInner*s,
-                       c.rGuardOuter*s,  c.rGuardOuter*s);
-    st.l6 = new TLine( c.rGuardInner*s, -c.rGuardInner*s,
-                       c.rGuardOuter*s, -c.rGuardOuter*s);
-    st.l7 = new TLine(-c.rGuardInner*s,  c.rGuardInner*s,
-                      -c.rGuardOuter*s,  c.rGuardOuter*s);
-    st.l8 = new TLine(-c.rGuardInner*s, -c.rGuardInner*s,
-                      -c.rGuardOuter*s, -c.rGuardOuter*s);
+    st.l5 = new TLine( c.rVetoInner*s,  c.rVetoInner*s,
+                       c.rVetoOuter*s,  c.rVetoOuter*s);
+    st.l6 = new TLine( c.rVetoInner*s, -c.rVetoInner*s,
+                       c.rVetoOuter*s, -c.rVetoOuter*s);
+    st.l7 = new TLine(-c.rVetoInner*s,  c.rVetoInner*s,
+                      -c.rVetoOuter*s,  c.rVetoOuter*s);
+    st.l8 = new TLine(-c.rVetoInner*s, -c.rVetoInner*s,
+                      -c.rVetoOuter*s, -c.rVetoOuter*s);
 
     TLine* lines[] = { st.l1, st.l2, st.l3, st.l4,
                        st.l5, st.l6, st.l7, st.l8 };
@@ -443,7 +443,7 @@ static DrawingState* drawBeam(const Config& c,
 
     const double epsTheta = c.epsThetaDeg * TMath::DegToRad();
     const double padsArea = integratePad(beamX, beamY, R,
-                                         0.0, c.rOuterPad,
+                                         0.0, c.rBeamSpot,
                                          0.0, 2.0 * TMath::Pi(),
                                          c.epsR, epsTheta);
     const double beamArea = integratePad(beamX, beamY, R,
