@@ -141,7 +141,7 @@ Output histograms:
 
 Reads `results/ParticleDistributions.root` and runs the Monte Carlo simulation for `nProtons`. For each energy in `labEnergies`, for each combination of `(beamSpotHist, stoppingFile, De-family)`, the code tracks protons through the active volume and counts how many pass the veto-threshold cut. The resulting efficiencies define the scan used to extract the central value and systematic band.
 
-Output: `results/efficiencySummary.txt` — human-readable table with one block per energy, listing every variant's efficiency plus the median/min/max across variants.
+Output: `results/allSimulatedEfficiencies.txt` — human-readable table with one block per energy, listing every variant's efficiency plus the median/min/max across variants.
 
 ### Stage 3: `summarize_efficiency.py` (optional post-processing)
 
@@ -151,7 +151,7 @@ Parses `results/allSimulatedEfficiencies.txt` and produces a clean tabular summa
 python3 summarize_efficiency.py [input.txt] [output.txt]
 ```
 
-Defaults are `efficiencySummary.txt` and `efficiencyCentralWithSystematics.txt` in the current directory. The two uncertainties are reported separately so the relative contribution of each can be inspected; to obtain a single combined 1σ error bar, add them in quadrature.
+Defaults are `allSimulatedEfficiencies.txt` and `efficiencySummaryWithUncertainties.txt` in the current directory. The two uncertainties are reported separately so the relative contribution of each can be inspected; to obtain a single combined 1σ error bar, add them in quadrature.
 
 ## Configuration
 
