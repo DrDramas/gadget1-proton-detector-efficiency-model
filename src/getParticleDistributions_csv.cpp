@@ -48,8 +48,7 @@ const double pi = TMath::Pi();
 //   TKelvin, PTorr, fillGasAtomicRadius, beamIonAtomicRadius,
 //   M_fillGas, M_beamIon
 //
-// Required list-valued keys (whitespace-separated; any amount of
-// whitespace, including newlines, between values is fine):
+// Required list-valued keys (comma-separated; whitespace ignored):
 //   numHalfLives, x_0, y_0, R  -- all four must have equal length N;
 //                                  produces N beam-spot histograms.
 //   De                         -- length M; produces M*9 electron-cloud
@@ -183,14 +182,13 @@ static int OptionalInt(const map<string,string> &kv,
   return static_cast<int>(v);
 }
 
-static vector<string> SplitWhitespace(const string &s) {
+static vector<string> SplitCSV(const string &s) {
   vector<string> out;
   string tok;
   istringstream iss(s);
-  // operator>> on a string reads whitespace-separated tokens, skipping any
-  // amount of leading whitespace and stopping at the next whitespace run.
-  while (iss >> tok) {
-    out.push_back(tok);
+  while (getline(iss, tok, ',')) {
+    trim(tok);
+    if (!tok.empty()) out.push_back(tok);
   }
   return out;
 }
@@ -198,7 +196,7 @@ static vector<string> SplitWhitespace(const string &s) {
 static vector<double> RequireDoubleList(const map<string,string> &kv,
                                         const string &key) {
   string raw = RequireStr(kv, key);
-  vector<string> toks = SplitWhitespace(raw);
+  vector<string> toks = SplitCSV(raw);
   if (toks.empty()) {
     cerr << "ERROR: config key '" << key << "' has no values" << endl;
     exit(1);
