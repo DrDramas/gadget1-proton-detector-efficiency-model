@@ -58,6 +58,7 @@ This code evaluates the efficiency across a grid of variations in each of these 
 ├── gecoverBeamSpot.cpp           # stage-0: fit beam-spot x_0, y_0, R
 ├── getParticleDistributions.cpp  # stage-1: sample input distributions
 ├── sgmc.cpp                      # stage-2: Monte-Carlo efficiency scan
+├── summarize_efficiency.py       # stage-3: post-process efficiency summary
 ├── recoverBeamSpot.cfg           # stage-0 config
 ├── getParticleDistributions.cfg  # stage-1 config
 ├── sgmc.cfg                      # stage-2 config
@@ -69,7 +70,8 @@ This code evaluates the efficiency across a grid of variations in each of these 
 │   └── stoppingPower104percent.txt
 ├── results/                      # generated outputs (gitignored)
 │   ├── ParticleDistributions.root
-│   └── efficiencySummary.txt
+│   ├── efficiencySummary.txt
+│   └── efficiencyCentralWithSystematics.txt
 └── images/                       # README figures (gitignored)
     ├── GADGET.png                
     ├── PrincipleOfOperation.png  
@@ -79,10 +81,11 @@ This code evaluates the efficiency across a grid of variations in each of these 
 
 ## Requirements
 
-- **ROOT 6.24 or newer.** Earlier versions lack the `TF2::GetRandom2(x, y, TRandom*)` and `TH2::GetRandom2(x, y, TRandom*)` overloads that the parallel sampling relies on. Check with `root-config --version`.
+- **ROOT 6.24 or newer.** Earlier versions lack the `TF2::GetRandom2(x, y, TRandom*)` and `TH2::GetRandom2(x, y, TRandom*)` overloads that the parallel sampling relies on. Check with `root-config --version`. The build also links against ROOT's Minuit library (`-lMinuit` in the Makefile) for the χ² fit in stage 0; this is included in standard ROOT installations.
 - **A C++14 compiler** (`g++` 5.0+ or `clang++` 3.4+).
 - **GNU make**. On macOS, the default `make` works; on BSD you may need `gmake`.
 - **pthreads** (standard on Linux/macOS; the Makefile passes `-pthread`).
+- **Python 3.6+** (only needed for the optional stage-3 post-processing script).
 
 ## Building
 
@@ -140,6 +143,16 @@ Reads `results/ParticleDistributions.root` and runs the Monte Carlo simulation f
 
 Output: `results/efficiencySummary.txt` — human-readable table with one block per energy, listing every variant's efficiency plus the median/min/max across variants.
 
+### Stage 3: `summarize_efficiency.py` (optional post-processing)
+
+Parses `results/efficiencySummary.txt` and produces a clean tabular summary of proton energy vs. central efficiency with separate columns for the systematic and statistical uncertainties. The central value is the median efficiency across all variants in the `(beamSpot, threshold, stoppingFile, DeIdx)` parameter scan. The systematic uncertainty is the unbiased sample standard deviation of the efficiency across variants at each energy; the statistical uncertainty is the per-variant Monte Carlo uncertainty of the median variant, computed by the simulation as `eff/sqrt(h6)`.
+
+```bash
+python3 summarize_efficiency.py [input.txt] [output.txt]
+```
+
+Defaults are `efficiencySummary.txt` and `efficiencyCentralWithSystematics.txt` in the current directory. The two uncertainties are reported separately so the relative contribution of each can be inspected; to obtain a single combined 1σ error bar, add them in quadrature.
+
 ## Configuration
 
 All three programs use the same simple format: `key = value` per line, `#` starts a comment, blank lines are ignored. List-valued keys use comma-separated values in stage 1 and whitespace-separated values in stages 0 and 2 (historical accident; kept for backwards compatibility with existing config files).
@@ -166,15 +179,16 @@ Stage 0 is not parallelized — it takes a few seconds at most, and MINUIT has n
 
 ## Parallelization notes
 
-Stages 1 and 2 use a `std::thread` pool with atomic job-index dispatch. ROOT's thread-safety caveats required several specific workarounds:
+Stages 1 and 2 use a `std::thread` pool with atomic job-index dispatch. **`ROOT::EnableThreadSafety()` is called once at startup** to install locks around ROOT's global state (object lists, the TBufferFile pool, the directory mechanism). This is essential — without it, concurrent `new TH2D(...)` / `new TF2(...)` calls from worker threads corrupt the allocator's bookkeeping and produce eventual `double free` aborts.
+
+In addition to that global switch, the code retains several application-level workarounds that are best practice for multi-threaded ROOT code:
 
 - **`TF2` formulas are pre-compiled on the main thread** and copy-constructed into each worker, because formula construction invokes the Cling JIT which has process-global state.
 - **ROOT class dictionaries are warmed on the main thread** before workers are launched, so no worker triggers a lazy Cling dictionary load.
-- **Input histograms are cloned serially on the main thread** into per-thread workspaces. `TH1::Clone` walks ROOT's global directory lists and is not thread-safe.
+- **Input histograms are cloned serially on the main thread** into per-thread workspaces. `TH1::Clone` walks ROOT's global directory lists.
 - **Each worker owns its own `TRandom3`** and all `GetRandom*` calls route through it explicitly, so `gRandom` is never touched.
 - **Output file writes are serialized** on the main thread after all workers have joined. `TFile` is not thread-safe.
-
-If you port to a newer ROOT that enables `ROOT::EnableThreadSafety()` cleanly, some of the above can be simplified.
+- **Histogram ownership is handed off explicitly** at cleanup: each worker returns a `TH2D` with `SetDirectory(nullptr)`, and the main thread calls `release()` on the owning `unique_ptr` before `SetDirectory(OutFile)` transfers ownership to the output `TFile`. This avoids a double-delete at scope exit, since `TFile` deletes all histograms attached to it during its own destructor.
 
 ## Reproducibility
 
@@ -192,9 +206,22 @@ For the GADGET II upgrade (a TPC-based successor to the present Proton Detector)
 
 ## Citation
 
-If you use this code in published work, please cite:
-> T. Budner, M. Friedman, L. J. Sun, C. Wrede, *et al.* "β-Delayed Proton Pandemonium: A first look at the <sup>31</sup>Cl(βpγ)<sup>30</sup>P decay scheme," Phys. Rev. C  (2026).
+If you use this code in published work, please cite both the paper and the software:
+
+**Paper:**
+> T. Budner, M. Friedman, L. J. Sun, C. Wrede, *et al.*, "β-delayed proton pandemonium: A first detailed <sup>31</sup>Cl(βpγ)<sup>30</sup>P decay scheme," Phys. Rev. C (accepted, 2026).
+
+**Software:**
+> T. Budner, *SGMC: Simplified Geometric Monte Carlo simulation of proton-detection efficiency for the GADGET system*, Zenodo (2026), [doi:10.5281/zenodo.XXXXXXX](https://doi.org/10.5281/zenodo.XXXXXXX).
+
+Use the concept DOI (above) when citing the software, so the citation always resolves to the most recent release.
+
+Related works:
 
 > T. Budner, "<sup>31</sup>Cl β-Delayed Proton Decay and Classical Nova Nucleosynthesis," Ph.D. thesis, Michigan State University (2022).
 
-> T. Budner, M. Friedman, C. Wrede, B. A. Brown *et al.* "Constraining the <sup>30</sup>P(p,γ)<sup>31</sup>S Reaction Rate in ONe Novae via the Weak, Low-Energy, β-Delayed Proton Decay of <sup>31</sup>Cl," Phys. Rev. Lett. **128**, 182701 (2022).
+> T. Budner, M. Friedman, C. Wrede, B. A. Brown *et al.*, "Constraining the <sup>30</sup>P(p,γ)<sup>31</sup>S Reaction Rate in ONe Novae via the Weak, Low-Energy, β-Delayed Proton Decay of <sup>31</sup>Cl," Phys. Rev. Lett. **128**, 182701 (2022).
+
+### Note on code provenance
+
+The numerical results reported in the published paper were generated with an earlier, serial implementation of this code. The implementation has since been refactored for clarity, configurability, and parallelization, but the underlying physics and numerical methods are unchanged. The refactored code has been validated against the original by comparing detection efficiencies across the systematic parameter scan; the central values agree across all proton energies from 250 keV to 2.4 MeV within Monte Carlo statistical uncertainty.
