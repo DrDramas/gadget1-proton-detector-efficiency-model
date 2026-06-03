@@ -145,7 +145,7 @@ Output: `results/efficiencySummary.txt` — human-readable table with one block 
 
 ### Stage 3: `summarize_efficiency.py` (optional post-processing)
 
-Parses `results/efficiencySummary.txt` and produces a clean tabular summary of proton energy vs. central efficiency with separate columns for the systematic and statistical uncertainties. The central value is the median efficiency across all variants in the `(beamSpot, threshold, stoppingFile, DeIdx)` parameter scan. The systematic uncertainty is the unbiased sample standard deviation of the efficiency across variants at each energy; the statistical uncertainty is the per-variant Monte Carlo uncertainty of the median variant, computed by the simulation as `eff/sqrt(h6)`.
+Parses `results/allSimulatedEfficiencies.txt` and produces a clean tabular summary of proton energy vs. central efficiency with separate columns for the systematic and statistical uncertainties. The central value is the median efficiency across all variants in the `(beamSpot, threshold, stoppingFile, DeIdx)` parameter scan. The systematic uncertainty is the unbiased sample standard deviation of the efficiency across variants at each energy; the statistical uncertainty is the per-variant Monte Carlo uncertainty of the median variant, computed by the simulation as `eff/sqrt(h6)`.
 
 ```bash
 python3 summarize_efficiency.py [input.txt] [output.txt]
@@ -161,12 +161,13 @@ Required and optional keys for each stage are documented at the top of the respe
 
 ### Typical workflow
 
-1. Edit `RecoverBeamSpot.cfg` to use your experiment's pad intensities (either set `padsExperimental` inline or point `intensityFile` at a text file with five numbers).
+1. Edit `recoverBeamSpot.cfg` to use your experiment's pad intensities (either set `padsExperimental` inline or point `intensityFile` at a text file with five numbers).
 2. Run `./RecoverBeamSpot` and record the fitted `(x_0, y_0, R)`.
-3. Edit `GetParticleDistributions.cfg` to use those values as the central preset in the `x_0`, `y_0`, `R` lists, and add ±1σ shifts as additional presets for systematic uncertainty.
+3. Edit `getParticleDistributions.cfg` to use those values as the central preset in the `x_0`, `y_0`, `R` lists, and add ±1σ shifts as additional presets for systematic uncertainty.
 4. Run `./GetParticleDistributions` to produce `ParticleDistributions.root`.
-5. Edit `simulations.config` to use the list of beam-spot histograms and De values from the previous step, plus your stopping-power files, energies, and thresholds.
-6. Run `./SGMC` to produce the efficiency summary.
+5. Edit `sgmc.cfg` to use the list of beam-spot histograms and De values from the previous step, plus your stopping-power files, energies, and thresholds.
+6. Run `./SGMC` to simulate detection efficiences for all proton energies.
+7. Run `python3 summarize_efficiency.py` to summarize efficiency results and their uncertainties.
 
 ### Tuning for your workload
 
@@ -224,4 +225,4 @@ Related works:
 
 ### Note on code provenance
 
-The numerical results reported in the published paper were generated with an earlier implementation of this code. The software has since been refactored for clarity, configurability, and improved parallelization, but the underlying physics and numerical methods are unchanged. The refactored code has been validated against the original by comparing detection efficiencies across the systematic parameter scan; the central values agree across all proton energies from 0.25 MeV to 2.4 MeV within Monte Carlo statistical uncertainty.
+The numerical results reported in the published paper were generated with an earlier implementation of this code. The software has since been refactored for clarity, configurability, and improved parallelization, but the underlying physics and numerical methods are unchanged. The refactored code has been validated against the original by comparing detection efficiencies across the systematic parameter scan; the central values agree across all lab-frame proton energies from 250 keV to 2414 keV within Monte Carlo statistical uncertainty.
