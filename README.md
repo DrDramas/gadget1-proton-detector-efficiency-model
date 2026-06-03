@@ -68,10 +68,10 @@ This code evaluates the efficiency across a grid of variations in each of these 
 │   ├── protonStoppingPower808TorrP10gas.txt
 │   ├── stoppingPower96percent.txt
 │   └── stoppingPower104percent.txt
-├── results/                      # generated outputs (gitignored)
+├── results/
 │   ├── ParticleDistributions.root
-│   ├── efficiencySummary.txt
-│   └── efficiencyCentralWithSystematics.txt
+│   ├── allSimulatedEfficiencies.txt
+│   └── efficiencySummaryWithUncertainties.txt
 └── images/                       # README figures (gitignored)
     ├── GADGET.png                
     ├── PrincipleOfOperation.png  
@@ -224,4 +224,4 @@ Related works:
 
 ### Note on code provenance
 
-The numerical results reported in the published paper were generated with an earlier, serial implementation of this code. The implementation has since been refactored for clarity, configurability, and parallelization, but the underlying physics and numerical methods are unchanged. The refactored code has been validated against the original by comparing detection efficiencies across the systematic parameter scan; the central values agree across all proton energies from 250 keV to 2.4 MeV within Monte Carlo statistical uncertainty.
+The numerical results reported in the published paper were generated with an earlier implementation of this code. The software has since been refactored for clarity, configurability, and improved parallelization, but the underlying physics and numerical methods are unchanged. The refactored code has been validated against the original by comparing detection efficiencies across the systematic parameter scan; the central values agree across all proton energies from 0.25 MeV to 2.4 MeV within Monte Carlo statistical uncertainty.
