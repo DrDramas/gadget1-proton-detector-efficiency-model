@@ -379,6 +379,10 @@ static TH2D *FillElectronCloud(const ElectronCloudJob &job,
   TH2D *h = new TH2D(job.name.c_str(), job.title.c_str(),
                      1000, job.xMin, job.xMax, 1000, job.yMin, job.yMax);
   h->SetDirectory(nullptr);
+  h->GetXaxis()->SetTitle("x-position [mm]");
+  h->GetXaxis()->CenterTitle();
+  h->GetYaxis()->SetTitle("y-position [mm]");
+  h->GetYaxis()->CenterTitle();
 
   double x, y;
   for (long i = 0; i < nElectrons; ++i) {
