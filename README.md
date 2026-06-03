@@ -128,7 +128,7 @@ The extracted values feed into stage 1's `x_0`, `y_0`, and `R` parameters (along
 
 ### Stage 2: `GetParticleDistributions`
 
-Reads `data/tripleCoincidences.root`, samples the longitudinal drift-time distribution, builds N Gaussian beam-spot histograms, and builds M × 9 electron-cloud histograms (one per De value per drift time from 0 to 8 µs). Writes everything to
+Reads `data/BetaDecayData31Cl.root`, samples the longitudinal drift-time distribution, builds N Gaussian beam-spot histograms, and builds M × 9 electron-cloud histograms (one per De value per drift time from 0 to 8 µs). Writes everything to
 `results/ParticleDistributions.root`.
 
 Output histograms:
