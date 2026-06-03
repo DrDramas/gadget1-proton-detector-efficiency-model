@@ -42,34 +42,30 @@ using std::vector;
 //
 // Pad geometry:
 //   The detector has one central circular pad of radius rCentral, surrounded
-//   by an annular ring (rCentral -> rBeamSpot) divided azimuthally into four
+//   by an annular ring (rCentral -> rOuterPad) divided azimuthally into four
 //   quadrant pads at theta = 0, 90, 180, 270 degrees.  For display purposes
-//   two additional circles are drawn at rVetoInner and rVetoOuter with 45-
+//   two additional circles are drawn at rGuardInner and rGuardOuter with 45-
 //   degree radial lines between them.
 //
 // Config keys (all optional; defaults in parentheses reproduce the original
 // AstroBox-II geometry and the original integration grid):
 //
 //   Geometry:
-//     rCentral       (14.2)  -- inner radius of the quadrant pads  [mm]
-//     rBeamSpot      (27.6)  -- radius of the beam spot            [mm]
-//     rVetoInner     (40.0)  -- inner radius of the veto pads      [mm]
-//     rVetoOuter     (50.0)  -- outer radius of the veto pads      [mm]
+//     rCentral       (14.2)  -- inner radius of the quadrant pads [mm]
+//     rOuterPad      (27.6)  -- outer radius of the quadrant pads [mm]
+//     rGuardInner    (40.0)  -- inner radius of the guard ring    [mm]
+//     rGuardOuter    (50.0)  -- outer radius of the guard ring    [mm]
 //
 //   Numerical integration:
 //     epsR           (1.0)   -- radial step [mm]
 //     epsThetaDeg    (1.0)   -- azimuthal step [deg]
 //
-//   Measured pad intensities (REQUIRED unless `intensityFile` is given):
-//     padsExperimental       -- whitespace-separated list of 5 counts:
+//   Measured pad intensities (REQUIRED):
+//     padCounts              -- whitespace-separated list of 5 counts:
 //                               {central, quadrant0, quadrant1, quadrant2,
 //                                quadrant3}.  The "quadrant0" pad covers
 //                               0 < theta < 90 deg, quadrant1 covers 90 <
 //                               theta < 180, etc.
-//     intensityFile          -- alternative: read the 5 values from this
-//                               plain-text file (one or more lines,
-//                               whitespace-separated).  If both are given,
-//                               intensityFile wins.
 //
 //   Minuit starting point and bounds:
 //     xStart         (0.0)   -- initial beam-center x [mm]
@@ -90,16 +86,16 @@ using std::vector;
 struct Config {
     // Geometry
     double rCentral     = 14.2;
-    double rBeamSpot    = 27.6;
-    double rVetoInner   = 40.0;
-    double rVetoOuter   = 50.0;
+    double rOuterPad    = 27.6;
+    double rGuardInner  = 40.0;
+    double rGuardOuter  = 50.0;
 
     // Integration
     double epsR         = 1.0;
     double epsThetaDeg  = 1.0;
 
     // Measured intensities (central, Q0, Q1, Q2, Q3)
-    vector<double> padsExperimental;
+    vector<double> padCounts;
 
     // Minuit starting point / bounds
     double xStart = 0.0, xStep = 20.0, xLow = -100.0, xHigh = 100.0;
@@ -150,24 +146,8 @@ static bool parseBool(const string& v) {
     return !(s == "0" || s == "false" || s == "no" || s.empty());
 }
 
-// Pad intensities can live either inline in the config or in a separate
-// whitespace-delimited text file (one run = 5 numbers).  Returns an empty
-// vector if the file is unreadable.
-static vector<double> readIntensityFile(const string& path) {
-    ifstream in(path);
-    if (!in.is_open()) {
-        cerr << "Error: could not open intensity file: " << path << endl;
-        return {};
-    }
-    vector<double> out;
-    double v;
-    while (in >> v) out.push_back(v);
-    return out;
-}
-
 static Config loadConfig(const string& path) {
     Config cfg;
-    string intensityFile;
 
     ifstream in(path);
     if (!in.is_open()) {
@@ -181,13 +161,12 @@ static Config loadConfig(const string& path) {
         if (!parseConfigLine(raw, key, value)) continue;
 
         if      (key == "rCentral")         cfg.rCentral    = std::stod(value);
-        else if (key == "rBeamSpot")        cfg.rBeamSpot   = std::stod(value);
-        else if (key == "rVetoInner")      cfg.rVetoInner = std::stod(value);
-        else if (key == "rVetoOuter")      cfg.rVetoOuter = std::stod(value);
+        else if (key == "rOuterPad")        cfg.rOuterPad   = std::stod(value);
+        else if (key == "rGuardInner")      cfg.rGuardInner = std::stod(value);
+        else if (key == "rGuardOuter")      cfg.rGuardOuter = std::stod(value);
         else if (key == "epsR")             cfg.epsR        = std::stod(value);
         else if (key == "epsThetaDeg")      cfg.epsThetaDeg = std::stod(value);
-        else if (key == "padsExperimental") cfg.padsExperimental = parseDoubleList(value);
-        else if (key == "intensityFile")    intensityFile = value;
+        else if (key == "padCounts")        cfg.padCounts = parseDoubleList(value);
         else if (key == "xStart")           cfg.xStart = std::stod(value);
         else if (key == "yStart")           cfg.yStart = std::stod(value);
         else if (key == "RStart")           cfg.RStart = std::stod(value);
@@ -206,17 +185,10 @@ static Config loadConfig(const string& path) {
                   << "' -- ignoring." << endl;
     }
 
-    // intensityFile (if given) overrides inline padsExperimental
-    if (!intensityFile.empty()) {
-        vector<double> v = readIntensityFile(intensityFile);
-        if (!v.empty()) cfg.padsExperimental = v;
-    }
-
-    if (cfg.padsExperimental.size() != 5) {
-        cerr << "Error: padsExperimental must have exactly 5 values (got "
-             << cfg.padsExperimental.size() << "). Either set "
-             << "'padsExperimental = v0 v1 v2 v3 v4' in the config or "
-             << "provide 'intensityFile = path'." << endl;
+    if (cfg.padCounts.size() != 5) {
+        cerr << "Error: padCounts must have exactly 5 values (got "
+             << cfg.padCounts.size() << "). Set "
+             << "'padCounts = v0 v1 v2 v3 v4' in the config." << endl;
         std::exit(1);
     }
     return cfg;
@@ -224,16 +196,16 @@ static Config loadConfig(const string& path) {
 
 static void printConfig(const Config& c) {
     cout << "---- recoverBeamSpot configuration ----"                         << endl;
-    std::printf("  Geometry [mm]: rCentral=%.2f, rBeamSpot=%.2f, "
-                "rVetoInner=%.1f, rVetoOuter=%.1f\n",
-                c.rCentral, c.rBeamSpot, c.rVetoInner, c.rVetoOuter);
+    std::printf("  Geometry [mm]: rCentral=%.2f, rOuterPad=%.2f, "
+                "rGuardInner=%.1f, rGuardOuter=%.1f\n",
+                c.rCentral, c.rOuterPad, c.rGuardInner, c.rGuardOuter);
     std::printf("  Integration : epsR=%.3f mm, epsTheta=%.3f deg\n",
                 c.epsR, c.epsThetaDeg);
     std::printf("  Measured counts: %.1f (central) | %.1f %.1f %.1f %.1f "
                 "(Q0..Q3)\n",
-                c.padsExperimental[0], c.padsExperimental[1],
-                c.padsExperimental[2], c.padsExperimental[3],
-                c.padsExperimental[4]);
+                c.padCounts[0], c.padCounts[1],
+                c.padCounts[2], c.padCounts[3],
+                c.padCounts[4]);
     std::printf("  Start: x=%.2f (step %.2f, [%.1f,%.1f])\n",
                 c.xStart, c.xStep, c.xLow, c.xHigh);
     std::printf("         y=%.2f (step %.2f, [%.1f,%.1f])\n",
@@ -302,7 +274,7 @@ static void calculatePadIntensities(const Config& c,
         const double thLo = q * TMath::Pi() / 2.0;
         const double thHi = (q + 1) * TMath::Pi() / 2.0;
         outPads[q] = integratePad(beamX, beamY, R,
-                                  c.rCentral, c.rBeamSpot,
+                                  c.rCentral, c.rOuterPad,
                                   thLo, thHi,
                                   c.epsR, epsTheta);
         outPads[q] /= A;
@@ -315,17 +287,17 @@ static void calculatePadIntensities(const Config& c,
 
 // Chi-square between measured and calculated (quadrant / central) ratios.
 // `par[0..2]` are the fit parameters (x, y, R).  Measured counts come from
-// g_cfg->padsExperimental: index 0 is the central pad, indices 1..4 are
+// g_cfg->padCounts: index 0 is the central pad, indices 1..4 are
 // the four quadrants.
 static double chiSquare(const double* par) {
     double padsCalc[4];
     calculatePadIntensities(*g_cfg, par[0], par[1], par[2], padsCalc);
 
     // Normalized measurements + statistical errors on the ratios.
-    const double A = g_cfg->padsExperimental[0];
+    const double A = g_cfg->padCounts[0];
     double chi2 = 0.0;
     for (int i = 0; i < 4; ++i) {
-        const double B = g_cfg->padsExperimental[i + 1];
+        const double B = g_cfg->padCounts[i + 1];
         const double padsMeas = B / A;
         const double padsErr  = std::sqrt(1.0 / A + 1.0 / B) * padsMeas;
         const double resid    = (padsCalc[i] - padsMeas) / padsErr;
@@ -366,15 +338,15 @@ static void drawPads(DrawingState& st, const Config& c) {
     st.eCentral->SetFillStyle(0);
     st.eCentral->SetLineWidth(2);
 
-    st.eGuardInner = new TEllipse(0, 0, c.rVetoInner, c.rVetoInner);
+    st.eGuardInner = new TEllipse(0, 0, c.rGuardInner, c.rGuardInner);
     st.eGuardInner->SetFillStyle(0);
     st.eGuardInner->SetLineWidth(2);
 
-    st.eGuardOuter = new TEllipse(0, 0, c.rVetoOuter, c.rVetoOuter);
+    st.eGuardOuter = new TEllipse(0, 0, c.rGuardOuter, c.rGuardOuter);
     st.eGuardOuter->SetFillStyle(0);
     st.eGuardOuter->SetLineWidth(2);
 
-    st.eOuterPad = new TEllipse(0, 0, c.rBeamSpot, c.rBeamSpot);
+    st.eOuterPad = new TEllipse(0, 0, c.rOuterPad, c.rOuterPad);
     st.eOuterPad->SetFillStyle(0);
     st.eOuterPad->SetLineStyle(2);
     st.eOuterPad->SetLineColor(5);
@@ -382,21 +354,21 @@ static void drawPads(DrawingState& st, const Config& c) {
 
     // Radial divisions at 0, 90, 180, 270 deg between the central and
     // guard-outer circles.
-    st.l1 = new TLine(0,  c.rCentral,  0,  c.rVetoOuter);
-    st.l2 = new TLine( c.rCentral, 0,   c.rVetoOuter, 0);
-    st.l3 = new TLine(0, -c.rCentral,  0, -c.rVetoOuter);
-    st.l4 = new TLine(-c.rCentral, 0,  -c.rVetoOuter, 0);
+    st.l1 = new TLine(0,  c.rCentral,  0,  c.rGuardOuter);
+    st.l2 = new TLine( c.rCentral, 0,   c.rGuardOuter, 0);
+    st.l3 = new TLine(0, -c.rCentral,  0, -c.rGuardOuter);
+    st.l4 = new TLine(-c.rCentral, 0,  -c.rGuardOuter, 0);
 
     // Guard-ring 45-deg divisions (display only; not integrated).
     const double s = 1.0 / std::sqrt(2.0);
-    st.l5 = new TLine( c.rVetoInner*s,  c.rVetoInner*s,
-                       c.rVetoOuter*s,  c.rVetoOuter*s);
-    st.l6 = new TLine( c.rVetoInner*s, -c.rVetoInner*s,
-                       c.rVetoOuter*s, -c.rVetoOuter*s);
-    st.l7 = new TLine(-c.rVetoInner*s,  c.rVetoInner*s,
-                      -c.rVetoOuter*s,  c.rVetoOuter*s);
-    st.l8 = new TLine(-c.rVetoInner*s, -c.rVetoInner*s,
-                      -c.rVetoOuter*s, -c.rVetoOuter*s);
+    st.l5 = new TLine( c.rGuardInner*s,  c.rGuardInner*s,
+                       c.rGuardOuter*s,  c.rGuardOuter*s);
+    st.l6 = new TLine( c.rGuardInner*s, -c.rGuardInner*s,
+                       c.rGuardOuter*s, -c.rGuardOuter*s);
+    st.l7 = new TLine(-c.rGuardInner*s,  c.rGuardInner*s,
+                      -c.rGuardOuter*s,  c.rGuardOuter*s);
+    st.l8 = new TLine(-c.rGuardInner*s, -c.rGuardInner*s,
+                      -c.rGuardOuter*s, -c.rGuardOuter*s);
 
     TLine* lines[] = { st.l1, st.l2, st.l3, st.l4,
                        st.l5, st.l6, st.l7, st.l8 };
@@ -443,7 +415,7 @@ static DrawingState* drawBeam(const Config& c,
 
     const double epsTheta = c.epsThetaDeg * TMath::DegToRad();
     const double padsArea = integratePad(beamX, beamY, R,
-                                         0.0, c.rBeamSpot,
+                                         0.0, c.rOuterPad,
                                          0.0, 2.0 * TMath::Pi(),
                                          c.epsR, epsTheta);
     const double beamArea = integratePad(beamX, beamY, R,
