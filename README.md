@@ -5,6 +5,7 @@ This is a simulation of β-delayed charged-particle decays in the Proton Detecto
 1. **`RecoverBeamSpot`** uses the multiplicity of counts across the five active detector pads to determine a fit a 2D Gaussian distribution representative of the beam spot projected onto the Proton Detector's segmented electronics readout.
 2. **`GetParticleDistributions`** uses the position and width parameters deduced from χ<sup>2</sup> minimization fit from the first method to save these beam-spot distributions to histograms, which will be read out later in the full simulation. It also uses drift time data from a source ROOT file as a proxy for the longitudinal beam distribution in order to simulate the effect of electron diffusion within the gaseous medium, assuming a uniform eletric field. 
 3. **`SGMC`** calculates the energy deposition of protons in the fill gas using stopping power calculations in SRIM to determine the number of ionization electrons produced in each decay. It assumes β decays decays are isometric and uses the geometry of the emitted protons to estimate how likely a proton is to be detected.
+4. **`summarize_efficiency.py`** takes the output text file from the SGMC simulation and summarizes the final recommended efficiency value for a given proton energy in the laboratory frame, along with its systematic and statistical uncertainties.
 
 ## Physics overview
 
