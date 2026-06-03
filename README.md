@@ -68,11 +68,11 @@ This code evaluates the efficiency across a grid of variations in each of these 
 │   ├── protonStoppingPower808TorrP10gas.txt
 │   ├── stoppingPower96percent.txt
 │   └── stoppingPower104percent.txt
-├── results/
+├── results/                      # Output files from stages 2-4
 │   ├── ParticleDistributions.root
 │   ├── allSimulatedEfficiencies.txt
 │   └── efficiencySummaryWithUncertainties.txt
-└── images/                       # README figures (gitignored)
+└── images/                       # README figures
     ├── GADGET.png                
     ├── PrincipleOfOperation.png  
     ├── hDriftTimes.png           
