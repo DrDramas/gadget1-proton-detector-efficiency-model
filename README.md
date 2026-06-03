@@ -91,11 +91,11 @@ This code evaluates the efficiency across a grid of variations in each of these 
 
 ## Requirements
 
-- **ROOT 6.24 or newer.** Earlier versions lack the `TF2::GetRandom2(x, y, TRandom*)` and `TH2::GetRandom2(x, y, TRandom*)` overloads that the parallel sampling relies on. Check with `root-config --version`. The build also links against ROOT's Minuit library (`-lMinuit` in the Makefile) for the χ² fit in stage 0; this is included in standard ROOT installations.
+- **ROOT 6.24 or newer.** Earlier versions lack the `TF2::GetRandom2(x, y, TRandom*)` and `TH2::GetRandom2(x, y, TRandom*)` overloads that the parallel sampling relies on. Check with `root-config --version`. The build also links against ROOT's Minuit library (`-lMinuit` in the Makefile) for the χ² fit in stage ; this is included in standard ROOT installations.
 - **A C++14 compiler** (`g++` 5.0+ or `clang++` 3.4+).
 - **GNU make**. On macOS, the default `make` works; on BSD you may need `gmake`.
 - **pthreads** (standard on Linux/macOS; the Makefile passes `-pthread`).
-- **Python 3.6+** (only needed for the optional stage-3 post-processing script).
+- **Python 3.6+** (only needed for the optional stage-4 post-processing script).
 
 ## Building
 
@@ -168,32 +168,30 @@ Defaults are `results/allSimulatedEfficiencies.txt` and `results/efficiencySumma
 
 ## Configuration
 
-All three programs use the same simple format: `key = value` per line, `#` starts a comment, blank lines are ignored. List-valued keys use comma-separated values in stage 1 and whitespace-separated values in stages 0 and 2 (historical accident; kept for backwards compatibility with existing config files).
-
-Required and optional keys for each stage are documented at the top of the respective `.cpp` file, with defaults given in parentheses.
+All three programs use the same simple format: `key = value` per line, `#` starts a comment, blank lines are ignored. List-valued keys use whitespace-separated values. Required and optional keys for each stage are documented at the top of the respective `.cpp` file, with defaults given in parentheses.
 
 ### Typical workflow
 
-1. Edit `recoverBeamSpot.cfg` to use your experiment's pad intensities (either set `padsExperimental` inline or point `intensityFile` at a text file with five numbers).
-2. Run `./RecoverBeamSpot` and record the fitted `(x_0, y_0, R)`.
-3. Edit `getParticleDistributions.cfg` to use those values as the central preset in the `x_0`, `y_0`, `R` lists, and add ±1σ shifts as additional presets for systematic uncertainty.
-4. Run `./GetParticleDistributions` to produce `ParticleDistributions.root`.
-5. Edit `sgmc.cfg` to use the list of beam-spot histograms and De values from the previous step, plus your stopping-power files, energies, and thresholds.
-6. Run `./SGMC` to simulate detection efficiences for all proton energies.
-7. Run `python3 summarize_efficiency.py` to summarize efficiency results and their uncertainties.
+1. Edit `configs/recoverBeamSpot.cfg` to use your experiment's pad intensities (either set `padsExperimental` inline or point `intensityFile` at a text file with five numbers).
+2. Run `./bin/RecoverBeamSpot` and record the fitted `(x_0, y_0, R)`.
+3. Edit `configs/getParticleDistributions.cfg` to use those values as the central preset in the `x_0`, `y_0`, `R` lists, and add ±1σ shifts as additional presets for systematic uncertainty.
+4. Run `./bin/GetParticleDistributions` to produce `ParticleDistributions.root`.
+5. Edit `configs/sgmc.cfg` to use the list of beam-spot histograms and De values from the previous step, plus your stopping-power files, energies, and thresholds.
+6. Run `./bin/SGMC` to simulate detection efficiences for all proton energies.
+7. Run `python3 scripts/summarize_efficiency.py` to summarize efficiency results and their uncertainties.
 
 ### Tuning for your workload
 
 The two knobs that matter most for runtime:
 
-- **`nProtons` / `nElectrons`** (stage 1) and **`nProtons`** (stage 2) control per-histogram and per-variant statistics. Scale these together with the number of (stoppingFile × beamSpot × De × energy) variants to budget total CPU time.
-- **`nThreads`** (stages 1 and 2) sets the worker-pool size. `0` auto-detects the core count. Stage 1 parallelizes over histogram-filling jobs (beam-spot jobs are ~100× more expensive than electron-cloud jobs, so speedup caps at ~N when you have N beam spots). Stage 2 parallelizes over proton energies (so speedup caps at the number of energies).
+- **`nProtons` / `nElectrons`** (stage 2) and **`nProtons`** (stage 3) control per-histogram and per-variant statistics. Scale these together with the number of (stoppingFile × beamSpot × De × energy) variants to budget total CPU time.
+- **`nThreads`** (stages 2 and 3) sets the worker-pool size. `0` auto-detects the core count. Stage 2 parallelizes over histogram-filling jobs (beam-spot jobs are ~100× more expensive than electron-cloud jobs, so speedup caps at ~N when you have N beam spots). Stage 3 parallelizes over proton energies (so speedup caps at the number of energies).
 
-Stage 0 is not parallelized — it takes a few seconds at most, and MINUIT has no natural axis to parallelize over.
+Stage 1 is not parallelized; it takes a few seconds at most, and MINUIT has no natural axis to parallelize over.
 
 ## Parallelization notes
 
-Stages 1 and 2 use a `std::thread` pool with atomic job-index dispatch. **`ROOT::EnableThreadSafety()` is called once at startup** to install locks around ROOT's global state (object lists, the TBufferFile pool, the directory mechanism). This is essential — without it, concurrent `new TH2D(...)` / `new TF2(...)` calls from worker threads corrupt the allocator's bookkeeping and produce eventual `double free` aborts.
+Stages 2 and 3 use a `std::thread` pool with atomic job-index dispatch. **`ROOT::EnableThreadSafety()` is called once at startup** to install locks around ROOT's global state (object lists, the TBufferFile pool, the directory mechanism). This is essential — without it, concurrent `new TH2D(...)` / `new TF2(...)` calls from worker threads corrupt the allocator's bookkeeping and produce eventual `double free` aborts.
 
 In addition to that global switch, the code retains several application-level workarounds that are best practice for multi-threaded ROOT code:
 
