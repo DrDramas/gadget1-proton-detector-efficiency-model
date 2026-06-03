@@ -1,23 +1,24 @@
-# Shared by every target
-CXXFLAGS_COMMON := -O0 -g $(shell root-config --cflags)
-LDLIBS          := $(shell root-config --libs)
+SRCDIR := src
+BINDIR := bin
 
-# Parallel stages need pthreads
+CXXFLAGS_COMMON := -O2 $(shell root-config --cflags)
+LDLIBS          := $(shell root-config --libs)
 CXXFLAGS_PAR    := $(CXXFLAGS_COMMON) -pthread
 
-# Extra ROOT libraries beyond root-config --libs defaults
-LDLIBS_MINUIT   := -lMinuit
+.PHONY: all clean
+all: $(BINDIR)/RecoverBeamSpot $(BINDIR)/GetParticleDistributions $(BINDIR)/SGMC
 
-all: RecoverBeamSpot GetParticleDistributions SGMC
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
-RecoverBeamSpot: recoverBeamSpot.cpp
-	$(CXX) $(CXXFLAGS_COMMON) $< $(LDLIBS) $(LDLIBS_MINUIT) -o $@
+$(BINDIR)/RecoverBeamSpot: $(SRCDIR)/recoverBeamSpot.cpp | $(BINDIR)
+	$(CXX) $(CXXFLAGS_COMMON) $< $(LDLIBS) -lMinuit -o $@
 
-GetParticleDistributions: getParticleDistributions.cpp
+$(BINDIR)/GetParticleDistributions: $(SRCDIR)/getParticleDistributions.cpp | $(BINDIR)
 	$(CXX) $(CXXFLAGS_PAR) $< $(LDLIBS) -o $@
 
-SGMC: sgmc.cpp
+$(BINDIR)/SGMC: $(SRCDIR)/sgmc.cpp | $(BINDIR)
 	$(CXX) $(CXXFLAGS_PAR) $< $(LDLIBS) -o $@
 
 clean:
-	rm -f RecoverBeamSpot GetParticleDistributions SGMC
+	rm -rf $(BINDIR)

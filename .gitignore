@@ -1,9 +1,5 @@
-# Compiled binaries
-RecoverBeamSpot
-GetParticleDistributions
-SGMC
-
-# Object files
+# Build artifacts
+bin/
 *.o
 *.a
 
@@ -13,12 +9,9 @@ __pycache__/
 
 # Editor and OS junk
 *.swp
-*.swo
 *~
 .DS_Store
-.vscode/
-.idea/
 
-# Don't commit ROOT crash dumps
+# ROOT crash dumps
 core
 core.*
