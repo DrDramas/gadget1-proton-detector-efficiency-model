@@ -16,10 +16,10 @@ authors:
     orcid: https://orcid.org/0000-0002-2588-1874
 type: software
 version: 1.0.0
-date-released: 2026-XX-XX
-license: MIT  # match your LICENSE file
+date-released: 2026-06-03
+license: MIT
 repository-code: "https://github.com/DrDramas/gadget1-proton-detector-efficiency-model"
-doi: 10.5281/zenodo.XXXXXXXX  # concept DOI from Zenodo, once minted
+doi: 10.5281/zenodo.XXXXXXXX  # Update once minted
 preferred-citation:
   type: article
   title: "β-delayed proton pandemonium: A first detailed 31Cl(βpγ)30P decay scheme"
