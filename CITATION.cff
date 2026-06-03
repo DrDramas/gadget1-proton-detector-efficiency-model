@@ -1,0 +1,95 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite both the paper and the software, as described in the README."
+title: "Proton Detector efficiency simulation for the GADGET system"
+authors:
+  - family-names: Budner
+    given-names: Tamas
+    orcid: https://orcid.org/0000-0001-5470-5813
+  - family-names: Friedman
+    given-names: M.
+    orcid: https://orcid.org/0000-0002-6014-5506
+  - family-names: Surbrook
+    given-names: J.
+    orcid: https://orcid.org/0000-0003-3794-0269
+  - family-names: Wrede
+    given-names: C.
+    orcid: https://orcid.org/0000-0002-2588-1874
+type: software
+version: 1.0.0
+date-released: 2026-XX-XX
+license: MIT  # match your LICENSE file
+repository-code: "https://github.com/DrDramas/gadget1-proton-detector-efficiency-model"
+doi: 10.5281/zenodo.XXXXXXXX  # concept DOI from Zenodo, once minted
+preferred-citation:
+  type: article
+  title: "β-delayed proton pandemonium: A first detailed 31Cl(βpγ)30P decay scheme"
+  authors:
+    - family-names: Budner
+      given-names: Tamas
+      orcid: https://orcid.org/0000-0001-5470-5813
+    - family-names: Friedman
+      given-names: M.
+      orcid: https://orcid.org/0000-0002-6014-5506
+    - family-names: Sun
+      given-names: L. J.
+      orcid: https://orcid.org/0000-0002-1619-7448
+    - family-names: Wrede
+      given-names: C.
+      orcid: https://orcid.org/0000-0002-2588-1874
+    - family-names: Brown
+      given-names: B. A.
+      orcid: https://orcid.org/0000-0002-6111-1906
+    - family-names: Pérez-Loureiro
+      given-names: D.
+      orcid: https://orcid.org/0000-0002-0609-1308
+    - family-names: Surbrook
+      given-names: J.
+      orcid: https://orcid.org/0000-0003-3794-0269
+    - family-names: Adams
+      given-names: A.
+      orcid: https://orcid.org/0009-0002-6684-8584
+    - family-names: Ayyad
+      given-names: Y.
+      orcid: https://orcid.org/0000-0001-8604-4976
+    - family-names: Bardayan
+      given-names: D. W.
+      orcid: https://orcid.org/0000-0002-3185-491X
+    - family-names: Chae
+      given-names: K.
+      orcid: https://orcid.org/0000-0003-1819-079X
+    - family-names: Chen
+      given-names: A. A.
+      orcid: https://orcid.org/0000-0001-6515-6266
+    - family-names: Chipps
+      given-names: K. A.
+      orcid: https://orcid.org/0000-0003-3050-1298
+    - family-names: Glassman
+      given-names: B.
+    - family-names: Hall
+      given-names: M. R.
+      orcid: https://orcid.org/0000-0003-1162-3433
+    - family-names: Janasik
+      given-names: M.
+    - family-names: Liang
+      given-names: J.
+      orcid: https://orcid.org/0000-0001-7626-2785
+    - family-names: O'Malley
+      given-names: P.
+    - family-names: Pollacco
+      given-names: E.
+      orcid: https://orcid.org/0000-0003-4068-8682
+    - family-names: Psaltis
+      given-names: A.
+      orcid: https://orcid.org/0000-0003-2197-0797
+    - family-names: Stomps
+      given-names: J.
+      orcid: https://orcid.org/0000-0001-7811-4479
+    - family-names: Wheeler
+      given-names: T.
+      orcid: https://orcid.org/0009-0000-3403-694X
+    # add the rest of the author list here in the same format
+  journal: "Physical Review C"
+  year: 2026
+  # volume: ##           # uncomment once known
+  # start: ####          # page number, uncomment once known
+  # doi: 10.1103/...     # paper DOI, uncomment once known
