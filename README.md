@@ -52,31 +52,40 @@ This code evaluates the efficiency across a grid of variations in each of these 
 
 ```
 .
-├── Makefile
 ├── README.md
+├── LICENSE
+├── CITATION.cff
+├── Makefile
 ├── .gitignore
-├── gecoverBeamSpot.cpp           # stage-1: fit beam-spot x_0, y_0, R
-├── getParticleDistributions.cpp  # stage-2: sample input distributions
-├── sgmc.cpp                      # stage-3: Monte-Carlo efficiency scan
-├── summarize_efficiency.py       # stage-4: post-process efficiency summary
-├── recoverBeamSpot.cfg           # stage-1 config
-├── getParticleDistributions.cfg  # stage-2 config
-├── sgmc.cfg                      # stage-3 config
-├── data/                         # read-only inputs
-│   ├── BetaDecayData31Cl.root    # reference beam-profile histogram
-│   ├── padCounts.txt             # (optional) measured pad intensities
+├── src/                        # C++ sources
+│   ├── recoverBeamSpot.cpp
+│   ├── getParticleDistributions.cpp
+│   └── sgmc.cpp
+├── scripts/                    # post-processing scripts
+│   └── summarize_efficiency.py
+├── configs/                    # example configs
+│   ├── recoverBeamSpot.cfg
+│   ├── getParticleDistributions.cfg
+│   └── sgmc.cfg
+├── data/                       # read-only inputs
+│   ├── BetaDecayData31Cl.root
 │   ├── protonStoppingPower808TorrP10gas.txt
 │   ├── stoppingPower96percent.txt
 │   └── stoppingPower104percent.txt
-├── results/                      # Output files from stages 2-4
+├── results/                    # example outputs
 │   ├── ParticleDistributions.root
-│   ├── allSimulatedEfficiencies.txt
-│   └── efficiencySummaryWithUncertainties.txt
-└── images/                       # README figures
-    ├── GADGET.png                
-    ├── PrincipleOfOperation.png  
-    ├── hDriftTimes.png           
-    └── hBeamSpot.png             
+│   ├── efficiencySummary.txt
+│   └── efficiencyCentralWithSystematics.txt
+├── docs/                       # extra documentation, images
+│   └── images/
+│       ├── GADGET.png
+│       ├── PrincipleOfOperation.png
+│       ├── hDriftTimes.png
+│       └── hBeamSpot.png
+└── bin/                        # build artifacts (gitignored)
+    ├── RecoverBeamSpot
+    ├── GetParticleDistributions
+    └── SGMC           
 ```
 
 ## Requirements
@@ -89,6 +98,8 @@ This code evaluates the efficiency across a grid of variations in each of these 
 
 ## Building
 
+To build the executables, `make` produces binary files and stores them in `bin/`; `make clean` removes the entire `bin/` directory.
+
 From the project root:
 
 ```bash
@@ -99,7 +110,7 @@ make SGMC                      # stage-3 only
 make clean                     # removes binaries
 ```
 
-Make sure ROOT's environment is set up first — if `root-config --libs` prints nothing, source ROOT's setup script:
+Make sure ROOT's environment is set up first; if `root-config --libs` prints nothing, source ROOT's setup script:
 
 ```bash
 source /path/to/root/bin/thisroot.sh
@@ -107,15 +118,16 @@ source /path/to/root/bin/thisroot.sh
 
 ## Running
 
-The three stages run sequentially: stage 0 extracts beam-spot parameters from data, stage 1 generates the input histograms, stage 2 runs the Monte Carlo simulation.
+The three stages run sequentially: stage 1 extracts beam-spot parameters from data, stage 2 generates the input histograms, stage 3 runs the Monte Carlo simulation, and stage 4 summarizes the final proton efficiencies with uncertainties. All commands below assume your working directory is the repository root.
 
 ```bash
-./RecoverBeamSpot          recoverBeamSpot.cfg
-./GetParticleDistributions getParticleDistributions.cfg
-./SGMC                     sgmc.cfg
+./bin/RecoverBeamSpot                   configs/recoverBeamSpot.cfg
+./bin/GetParticleDistributions          configs/getParticleDistributions.cfg
+./bin/SGMC                              configs/sgmc.cfg
+python3 scripts/summarize_efficiency.py results/allSimulatedEfficiencies.txt results/efficiencySummaryWithUncertainties.txt
 ```
 
-If no config path is passed, each program falls back to its default filename (`recoverBeamSpot.cfg`, `getParticleDistributions.cfg`, and `sgmc.cfg` respectively).
+If no config path is passed in following the executable binary file, each program falls back to its default filename (`configs/recoverBeamSpot.cfg`, `configs/getParticleDistributions.cfg`, and `configs/sgmc.cfg` respectively). The arguments following the Python script are the input and output files. Similarly, if none provided, the program will default to `results/allSimulatedEfficiencies.txt` and `results/efficiencySummaryWithUncertainties.txt`, respectively.
 
 ### Stage 1: `RecoverBeamSpot`
 
