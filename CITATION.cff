@@ -19,7 +19,7 @@ version: 1.0.0
 date-released: 2026-06-03
 license: MIT
 repository-code: "https://github.com/DrDramas/gadget1-proton-detector-efficiency-model"
-doi: 10.5281/zenodo.XXXXXXXX  # Update once minted
+doi: 10.5281/zenodo.20524456
 references:
   - type: article
     title: "β-delayed proton pandemonium: A first detailed 31Cl(βpγ)30P decay scheme"
