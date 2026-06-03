@@ -1,4 +1,4 @@
-# Simplified Geometric Monte Carlo (SGMC) simulation
+# Proton Detector efficiency simulation for the GADGET system
 
 This is a simulation of β-delayed charged-particle decays in the Proton Detector, part of the Gaseous Detector with Germanium Tagging (GADGET) system developed at Michigan State University. This simplified, geometric Monte Carlo simulation (SGMC) was designed to characterize the proton-detection efficiency of GADGET by recreating the initial beam distribution from data and simulating proton track ionization within the active region of the detector chamber. The project consists of three programs that run sequentially:
 
@@ -14,14 +14,14 @@ This is a simulation of β-delayed charged-particle decays in the Proton Detecto
 ### GADGET
 A measurement was performed with GADGET, which pairs the Proton Detector, a gaseous proportional counter, with the Segmented Germanium Array (SeGA) for γ-ray detection. The <sup>31</sup>Cl beam was produced by the Coupled Cyclotron Facility at the National Superconducting Cyclotron Laboratory (now the Facility for Rare Isotope Beams). The radioactive ion beam entered the experimental setup through a thin Kapton window and was implanted in gaseous detector's active volume, composed of a P10 fill gas (90% Ar, 10% CH<sub>4</sub>).
 
-![GADGET](images/GADGET.png)
+![GADGET](docs/images/GADGET.png)
 
 *Figure 1: Schematic drawing of the GADGET system. The cylindrical, gaseous Proton Detector is surrounded by SeGA's 16 high-purity germanium detector crystals, which are kept cool using an automated cryogenic system of liquid nitrogen dewars. The red arrow indicates the direction of the incoming radioactive beam.*
 
 ### Principle of Operation
 The ions diffuse for a short time under Brownian motion before undergoing  β<sup>+</sup> decay. The detector is mostly transparent to fast-moving β particles, but the more massive protons and recoiling <sup>30</sup>P nucleus deposit their full center-of-mass energy into ionizing the fill gas. These ionization electronics drift at a constant velocity under the influence of a uniform electric field until they reach the amplification region, where their signals are amplified by the Micro-Mesh Gaseous Structure (MICROMEGAS). The detector's anode plane is segmented into 13 charge-senstive pads consisting of a central circular pad, which is surrounded by four annular pads. These five inner pads define the active region of the Proton Detector and are surrounded by eight veto pads, which are used to exclude decay events that do not deposit their full energy within the active region.
 
-![Principle of Operation](images/PrincipleOfOperation.png)
+![Principle of Operation](docs/images/PrincipleOfOperation.png)
 
 *Figure 2: Cartoon drawing the the Proton Detector's principle of operation.*
 
@@ -29,11 +29,11 @@ The ions diffuse for a short time under Brownian motion before undergoing  β<su
 
 SeGA is used to measure the γ-rays emitted from exicited states of <sup>31</sup>S populated by <sup>31</sup>Cl decay and allows for detailed proton-γ coincidence analysis for various radiations collected within the same time window. This is necessary in order to construct an accurate nuclear decay scheme for <sup>31</sup>Cl(βpγ)<sup>30</sup>P. The γ-ray information is also useful for reconstructing a rough approximation of the longitudinal distribution of the implanted ions. Because the relationship between the initial position of the decay event and the time it takes for ionization electronics to reach the MICROMEGAS is linear, measuring the time between coincident γ-rays and proton events allows us estimate the <sup>31</sup>Cl distribution along the length of the Proton Detector.
 
-![Longitudinal Beam Distribution](images/hDriftTimes.png)
+![Longitudinal Beam Distribution](docs/images/hDriftTimes.png)
 
 *Figure 3: Drift times for β-delayed particles detected in coincidence with γ-ray events observed in SeGA.*
 
-![Transverse Beam Spot](images/hBeamSpot.png)
+![Transverse Beam Spot](docs/images/hBeamSpot.png)
 
 *Figure 4: Reconstructed beam spot projected onto the segmented MICROMEGAS pad plane.*
 
@@ -172,7 +172,7 @@ All three programs use the same simple format: `key = value` per line, `#` start
 
 ### Typical workflow
 
-1. Edit `configs/recoverBeamSpot.cfg` to use your experiment's pad intensities (either set `padsExperimental` inline or point `intensityFile` at a text file with five numbers).
+1. Edit `configs/recoverBeamSpot.cfg` to reflect the total number of `padCounts` observed in each detector channel.
 2. Run `./bin/RecoverBeamSpot` and record the fitted `(x_0, y_0, R)`.
 3. Edit `configs/getParticleDistributions.cfg` to use those values as the central preset in the `x_0`, `y_0`, `R` lists, and add ±1σ shifts as additional presets for systematic uncertainty.
 4. Run `./bin/GetParticleDistributions` to produce `ParticleDistributions.root`.
